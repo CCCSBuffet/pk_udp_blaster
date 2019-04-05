@@ -1,12 +1,10 @@
 # UDP Speed Test
 
-# Test against my client and server
-
 Writing both a client and server is made difficult because both programs must be built in parallel. It does not good to implement features in one that are not available in the other. To ease this burden for you, I have supplied my reference client and server executables.
 
 These should be in a zip file contained in this repository.
 
-# Project description
+## Project description
 
 In this project, you will write a UDP client and server to exchange information. 
 The client will blast UDP datagrams at the server. The server will extract some information from the datagram it receives and send its own datagram back to the client. Each datagram the client sends should in theory generate a unique paired response from the server.
@@ -25,24 +23,24 @@ abstractions to hide the details you are learning here. With that said, you will
 - Working with pointers, unterminated buffers and pointers. Also pointers.
 Did I mention pointers? Systems programming. It's what's real. No safety nets here.
 
-# Byte ordering
+## Byte ordering
 
 Not covered in this project are the wonders of byte ordering over a network. Different architectures may order bytes differently (big endian versus little endian). To avoid these issues, there is a defined *network ordering*. Even though you are going from Intel to Intel, your code must include handling of conversion to and from network ordering. If your project skips this, you will be penalized.
 
-# Required to run with full optimization (when not debugging)
+## Required to run with full optimization (when not debugging)
 
 You will be running on the same internal Carthage network. As such, the connections
 may appear to be more reliable than UDP really is. It is essential that you test your programs when compiled with the optimizer on full bore. Once you are beyond debugging (using the -g compiler flag) you must test with the -O3 compiler flag.
 
 
-# Adherence to this specification
+## Adherence to this specification
 
 You have my client and server. Your correct output should match mine in all non-data-dependent respects. While I appreciate student customizations such as *"You ran the program wrong you losing loser"* I will deduct points if your output strays far from my own.
 
 In the event that *my* code does not adhere to this specification, the code supercedes
 the specification. Also, please let me know because I made a mistake that I would like to fix.
 
-# Client program
+## Client program
 
 You have **no** lattitude with respect to datagram format or options supported. For example, you must support the ```-h```, ```-s```, and ```-p``` options. You *may* implement a ```-d``` option for your own use. For example, your ```-d``` option might send *one* packet instead of the 262 thousand packets required otherwise.
 
@@ -62,7 +60,7 @@ If an acknowledgement is received for a sequence number you have no record of or
 
 Many error conditions must be checked. Fatal errors must cause ```main()``` to return a non-zero error code.
 
-## File names and makefile
+### File names and makefile
 
 You must use ```structure.hpp``` and ```defaults.hpp``` as given. If you make any changes to these files you risk not working with my reference client and / or server.
 
@@ -72,7 +70,7 @@ You must use ```structure.hpp``` and ```defaults.hpp``` as given. If you make an
 
 **FAILURE TO INCLUDE A MAKEFILE WILL CAUSE POINTS TO BE DEDUCTED.**
 
-## Command line options
+### Command line options
 
 You will use getopt to implement command line options. With the exception of ```-d``` the following is **required**:
 
@@ -103,7 +101,7 @@ You should match the following output from ```-h``` (client shown):
 ```
 
 
-## More information on getopt
+### More information on getopt
 
 ```getopt``` defines an ```extern``` named ```optarg.``` It is a ```char *```. Do not confuse this with a C++ ```string```.
 
@@ -111,7 +109,7 @@ Your option string must look something like this (for the client): ```"s:hp:d"``
 
 Neither ```-s``` nor ```-p``` are *required* as defaults are defined. 
 
-## Client Datagram
+### Client Datagram
 
 The client datagram is the one that the client sends to the server. It is found in
 ```structure.hpp```. You may **not** alter this structure in **any way**.
@@ -148,7 +146,7 @@ There is a diagram below in case this text is not clear.
 
 Remember that both datagram length and payload length are shorts. Shorts must be encoded in network byte ordering. They must be interpreted in host byte ordering.
 
-## Testing your client
+### Testing your client
 
 You must send exactly ```NUMBER_OF_DATAGRAMS``` packets. This means you must be
 prepared to keep track of the status of that many. However, for debugging purposes
@@ -160,7 +158,7 @@ You must run a server first. It will listen for packets and respond.
 
 You must test your client against your own server. And you must test your client against my server.
 
-## Error checking and exit values
+### Error checking and exit values
 
 Pay attention to this - it gives hints about error conditions you should be checking for.
 Failure to check for these errors will result in point deductions.
@@ -168,7 +166,7 @@ Failure to check for these errors will result in point deductions.
 | Sample output statement | Exit Code |
 |:----------------------- |:---------:|
 |cerr << "ERROR wrong datagram_length: " << v << " should be: " << datagram_length << endl; <br/>cerr << "Sequence number: " << sequence_number << endl;| keep going |
-|cerr << "Unable to allocate space for buffer: " << datagram_length << " bytes." << endl;| 4 |
+|cerr << "Unable to allocate space for buffer: " << datagram_length << " bytes." << endl;| 1 |
 |perror("ERROR opening socket");| 1 |
 |perror("ERROR setting nonblocking");| 1|
 |cerr << "ERROR, no such host: " << server_address << endl;| 1 |
@@ -177,7 +175,7 @@ Failure to check for these errors will result in point deductions.
 
 Remember that your client may send packets *so* quickly that with a slower network connection, you run out of buffer space for outgoing packets. This means you might get an error on send - this is *different* from getting the wrong number of bytes back from send.
 
-# Server Program
+## Server Program
 
 The server program must be run before your client program. A properly written server
 can service multiple clients at the same time since datagrams do not have any sense
@@ -192,7 +190,7 @@ by recvfrom.
 
 **Unlike the client**, the server can block on reads. Servers respond to client requests.
 
-## Command line options
+### Command line options
 
 You must support the following command line options:
 
@@ -218,13 +216,13 @@ You must match the following output from ```-h```:
    -v verbose mode - prints the received payloads
 ```
 
-## File names
+### File names
 
 Your server program file name must be ```server.cpp```. Your entire program must be
 implemented in one file. You must use ```structure.hpp``` and ```defaults.hpp``` as
 given.
 
-## Server Datagram
+### Server Datagram
 
 The server datagram is the one that the server sends back to the client. It is found in
 ```structure.hpp```. You may **not** alter this structure in **any way**. You can see
@@ -232,12 +230,12 @@ it above in the discussion about the client datagram.
 
 The server datagram needs no special memory tricks as it is a fixed size.
 
-## Testing your server
+### Testing your server
 
 Your server will have to work against your own client, of course. 
 I will also provide an ARM version of my client. Your server must support my client.
 
-## Error checking and exit values
+### Error checking and exit values
 
 Pay attention to this - it gives hints about error conditions you should be checking for.
 Failure to check for these errors will result in point deductions.
@@ -248,17 +246,17 @@ Failure to check for these errors will result in point deductions.
 |perror("ERROR on binding");|4|
 |cerr << "ERROR in sendto to: " << buffer << endl;<br/>perror("ERROR in sendto:");|no exit|
 
-# To be crystal clear re: lengths
+## To be crystal clear re: lengths
 
 ![packet length diagram](./datagram_layout.png)
 
-# Allocating and releasing memory
+## Allocating and releasing memory
 
 Points will be deducted if there is any way to leak memory. In virtually all cases anything
 you allocate with ```new``` or ```malloc``` must be freed with ```delete``` or ```free```
 respectively.
 
-# Sending and receiving must happen in an asynchronous manner
+## Sending and receiving must happen in an asynchronous manner
 
 *CHANGE: Made more clear.*
 
@@ -277,7 +275,7 @@ immediately. It is up to you to tell the difference between an error and there s
 Check ```errno``` for two values - ```EAGAIN``` and ```EWOULDBLOCK```. If ```errno``` is either of these
 there wasn't really an error - just nothing to read.
 
-# Some of the Berkeley sockets related functions you will use
+## Some of the Berkeley sockets related functions you will use
 
 You will use ```sendto``` and ```recvfrom``` to transmit and receive. These will both be done
 over the same socket.
@@ -294,11 +292,11 @@ these functions will lead to tears.
 ```gethostbyname``` will be used to turn a character / human readable server name into a number.
 
 
-# Handy links
+## Handy links
 
 [A fairly complete cheat sheet](http://beej.us/guide/bgnet/html/single/bgnet.html "Beej")
 
-# What to turn in
+## What to turn in
 
 **Nothing** - don't turn in anything. Leave your code in exactly the place specified at the top
 of this document. **DO NOT MODIFY ANY OF YOUR FILES IN THIS FOLDER AFTER THE DUE DATE**
