@@ -49,7 +49,7 @@ bool AttemptReception(int udp_socket, set<int> & unmatched_sequence_numbers, siz
 
 	bytes_received = recvfrom(udp_socket, (void *) &sd, sizeof(ServerDatagram), MSG_DONTWAIT, (struct sockaddr *) &recv_sockaddr, &l);
 	if (bytes_received != sizeof(ServerDatagram)) {
-		// The bytes received is not what we had hoped. If errno is of the right
+		// The bytes_received is not what we had hoped. If errno is of the right
 		// value then all is OK - there simply weren't any datagrams to read. If
 		// not one of the values below, an error occurred.
 		if (errno != EAGAIN && errno != EWOULDBLOCK) {
@@ -203,7 +203,7 @@ int main(int argc, char *argv[])
 	int i;
 	for (i = 0; i < number_of_packets; i++)
 	{
-		// Fill in the sequece number in a network portable manner.
+		// Fill in the sequence number in a network portable manner.
 		cd->sequence_number = htonl(i);
 
 		// sendto() contains everything we need to know as UDP is entirely stateless. It returns
