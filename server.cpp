@@ -96,7 +96,9 @@ int main(int argc, char * argv[])
 
 	while (true) {
 		bytes_received = recvfrom(udp_socket, buffer, BUFFER_SIZE, 0, (struct sockaddr *) &client_sockaddr, &l);
-
+		// If this were NONBLOCKING, then bytes_received might be -1 to signify that no datagram was waiting for us.
+		// If you get a -1, either it means the above OR it means there was an error. Check errno. If errno is
+		// EAGAIN, then there was no error - just nothing waiting for us.
 		if (bytes_received > 0) {
 			cd = (ClientDatagram *) buffer;
 			sd.sequence_number = cd->sequence_number;
