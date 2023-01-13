@@ -72,7 +72,7 @@ int main(int argc, char * argv[])
 	if (udp_socket < 0)
 	{
 		// perror makes use of "errno" to provide an error message meaningful
-		// to humans. It emits the string you provode as a prefix to the error message.
+		// to humans. It emits the string you provide as a prefix to the error message.
 		perror("ERROR opening socket");
 		exit(1);
 	}

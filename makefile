@@ -1,24 +1,24 @@
-CFLAGS	= -Wall -std=c++11 -g
+CFLAGS	= -Wall -Werror --pedantic -std=c++11 -O3
 CC		= g++
 COBJS	= client.o
 SOBJS	= server.o
+srcs	= $(wildcard *.cpp)
+deps	= $(srcs:.cpp=.d)
 
-all			: client server
+all		: client server
 
-client		: 	$(COBJS)
-			$(CC) -o $@ $(COBJS)
+client	: 	$(COBJS)
+		$(CC) -o $@ $(COBJS)
 
-client.o	:	client.cpp 
-			$(CC) $(CFLAGS) -c client.cpp
+%.o: %.cpp
+		$(CC) -MMD -MP $(CFLAGS) -c $< -o $@
 
-server		:	server.o
-			$(CC) -o $@ server.o
-			
-server.o	:	server.cpp
-			$(CC) $(CFLAGS) -c server.cpp
+server	:	server.o
+		$(CC) -o $@ server.o
 
+.PHONY: clean
 
-clean		:
-			rm -f *.o core client server
-			rm -rf .vscode/ipch
+clean:
+		$(RM) $(COBJS) $(SOBJS) $(deps) a.out core
 
+-include $(deps)

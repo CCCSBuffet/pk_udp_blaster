@@ -97,12 +97,13 @@ int main(int argc, char *argv[])
 	size_t datagram_length = sizeof(ClientDatagram) + carthage_user_id_length;
 	cout << "Datagram length: " << sizeof(ClientDatagram) << " size of string: " << carthage_user_id_length << " total length: " << datagram_length << endl;
 	ClientDatagram * cd = (ClientDatagram *) malloc(sizeof(datagram_length));
-	memset(cd, 0, datagram_length);
 
 	if (cd == nullptr) {
 		cerr << "Unable to allocate space for buffer: " << datagram_length << " bytes." << endl;
 		exit(4);
 	}
+
+	memset(cd, 0, datagram_length);
 
 	int c;
 
@@ -145,7 +146,7 @@ int main(int argc, char *argv[])
 	if (udp_socket < 0)
 	{
 		// perror makes use of "errno" to provide an error message meaningful
-		// to humans. It emits the string you provode as a prefix to the error message.
+		// to humans. It emits the string you provide as a prefix to the error message.
 		perror("ERROR opening socket");
 		free(cd);
 		exit(1);
@@ -188,7 +189,7 @@ int main(int argc, char *argv[])
 
 	// Initialize the server address by copying the results of gethostbyname. Note
 	// many samples online use bcopy. This is not portable. memmove is more powerful
-	// than memcopy so is used here (even though, by construction, the benefits of
+	// than memcpy so is used here (even though, by construction, the benefits of
 	// memmove are not being used).
 	memmove(&server_sockaddr.sin_addr.s_addr, server_hostent->h_addr, server_hostent->h_length);
 
@@ -229,6 +230,7 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
+        usleep(10);
 	}
 
 	free(cd);
