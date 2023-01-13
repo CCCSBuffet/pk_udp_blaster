@@ -1,4 +1,4 @@
-CFLAGS	= -Wall -Werror --pedantic -std=c++11 -O3
+CFLAGS	= -Wall -Werror --pedantic -std=c++11
 CC		= g++
 COBJS	= client.o
 SOBJS	= server.o
