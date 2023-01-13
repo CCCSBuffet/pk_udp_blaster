@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 	int server_port = PORT_NUMBER;
 	int number_of_packets = NUMBER_OF_DATAGRAMS;
 	char * server_address = (char *) SERVER_IP;
-    bool do_delay = false;
+    int delay = 0;
 	struct sockaddr_in server_sockaddr;
 	struct hostent * server_hostent;
 
@@ -111,7 +111,7 @@ int main(int argc, char *argv[])
 	// externally defined char pointer "optarg". Note that the use of atoi() is
 	// risky in general but suffices here. I would ward you away from using it in
 	// production code.
-	while ((c = getopt(argc, argv, "hs:p:dyn:")) != -1)
+	while ((c = getopt(argc, argv, "hs:p:dy:n:")) != -1)
 	{
 		switch (c)
 		{
@@ -121,8 +121,8 @@ int main(int argc, char *argv[])
 				cerr << " -d turns on debug mode" << endl;
 				cerr << " -s server_address ... defaults to 127.0.0.1" << endl;
 				cerr << " -p port_number ... defaults to " << PORT_NUMBER << endl;
-                cerr << " -y turns on delay" << endl;
-                cerr << " -n overrides number of datagrams" << endl;
+                cerr << " -y overrides delay ... defaults to 0" << endl;
+                cerr << " -n overrides number of datagrams ... defaults to 2^18" << endl;
 				free(cd);
 				exit(0);
 
@@ -143,7 +143,7 @@ int main(int argc, char *argv[])
                 break;
 
             case 'y':
-                do_delay = true;
+                delay = atoi(optarg);
                 break;
 		}
 	}
@@ -231,19 +231,21 @@ int main(int argc, char *argv[])
 				break;
 			}
 		} else {
-			// cerr << __LINE__ << "	sent: " << bytes_sent << "	sequence number: " << i << endl;
 			unmatched_sequence_numbers.insert(i);
-			if (!AttemptReception(udp_socket, unmatched_sequence_numbers, datagram_length)) {
-				cerr << "ERROR failure in packet reception" << endl;
-				retval = 6;
-				break;
-			}
+            for (int counter = 0; counter < 3; counter++) {
+                if (!AttemptReception(udp_socket, unmatched_sequence_numbers, datagram_length)) {
+                    cerr << "ERROR failure in packet reception" << endl;
+                    retval = 6;
+                    goto bad;
+                }
+            }
 		}
-        if (do_delay)
-            usleep(5000);
+        if (delay)
+            usleep(delay);
 	}
 
-	free(cd);
+bad:
+    free(cd);
 	close(udp_socket);
 	cout << i << " messages sent." << endl;
 	cout << "Unacknowledged packets: " << unmatched_sequence_numbers.size() << endl;
