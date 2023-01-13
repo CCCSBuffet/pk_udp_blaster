@@ -90,7 +90,7 @@ int main(int argc, char *argv[])
 	int server_port = PORT_NUMBER;
 	int number_of_packets = NUMBER_OF_DATAGRAMS;
 	char * server_address = (char *) SERVER_IP;
-
+    bool do_delay = false;
 	struct sockaddr_in server_sockaddr;
 	struct hostent * server_hostent;
 
@@ -111,16 +111,18 @@ int main(int argc, char *argv[])
 	// externally defined char pointer "optarg". Note that the use of atoi() is
 	// risky in general but suffices here. I would ward you away from using it in
 	// production code.
-	while ((c = getopt(argc, argv, "hs:p:d")) != -1)
+	while ((c = getopt(argc, argv, "hs:p:dyn:")) != -1)
 	{
 		switch (c)
 		{
 			case 'h':
 				cerr << argv[0] << "options:" << endl;
-				cerr << "	-h displays help" << endl;
-				cerr << "	-d debug mode" << endl;
-				cerr << "	-s server_address ... defaults to 127.0.0.1" << endl;
-				cerr << "	-p port_number ... defaults to " << PORT_NUMBER << endl;
+				cerr << " -h displays help" << endl;
+				cerr << " -d turns on debug mode" << endl;
+				cerr << " -s server_address ... defaults to 127.0.0.1" << endl;
+				cerr << " -p port_number ... defaults to " << PORT_NUMBER << endl;
+                cerr << " -y turns on delay" << endl;
+                cerr << " -n overrides number of datagrams" << endl;
 				free(cd);
 				exit(0);
 
@@ -136,6 +138,13 @@ int main(int argc, char *argv[])
 				server_port	= atoi(optarg);
 				break;
 
+            case 'n':
+                number_of_packets = atoi(optarg);
+                break;
+
+            case 'y':
+                do_delay = true;
+                break;
 		}
 	}
 	cout << "Client attempting to connect to port: " << server_port << endl;
@@ -230,7 +239,8 @@ int main(int argc, char *argv[])
 				break;
 			}
 		}
-        usleep(10);
+        if (do_delay)
+            usleep(5000);
 	}
 
 	free(cd);
